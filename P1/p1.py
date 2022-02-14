@@ -1,28 +1,30 @@
 import random 
 
 class Neurona:
-    def __init__(self, umbral, tipo):
+    def __init__(self, umbral, tipo, nombre):
         self.umbral = umbral
         self.tipo = tipo
         self.valor_entrada = 0
         self.valor_salida = 0
         self.conexiones = []
+        self.nombre = nombre
 
     def inicializar(self, x):
         self.valor_entrada = x
         
     def conectar(self, neurona, peso):
-        self.conexiones.append(neurona)
+        conexion = Conexion(peso, neurona)
+        self.conexiones.append(conexion)
         
     def disparar(self):
-        if self.valor_entrada > self.umbral:
+        if self.valor_entrada >= self.umbral:
             self.valor_salida = 1
         else:
             self.valor_salida = 0
         
     def propagar(self):
         for conexion in self.conexiones:
-            conexion.propagar(self.valor_entrada)
+            conexion.propagar(self.valor_salida)
         
 
 class Conexion:
@@ -47,6 +49,10 @@ class Capa:
 
     def anyadir(self, neurona):
         self.neuronas.append(neurona)
+    
+    def anyadir_lista(self, neuronas):
+        for neurona in neuronas:
+            self.neuronas.append(neurona)
 
     def conectar(self, capa, peso_min, peso_max):
         for neurona_destino in capa.neuronas:
@@ -74,6 +80,10 @@ class RedNeuronal:
     
     def anyadir(self, capa):
         self.capas.append(capa)
+    
+    def inicializar(self):
+        for capa in self.capas:
+            capa.inicializar()
 
     #En el proppagar en redneuronal llamar a inicializar(0) en todas las neuronas de la siguiente capa
     def disparar(self):
@@ -82,9 +92,20 @@ class RedNeuronal:
 
     def propagar(self):
         for capa in self.capas:
-            capa.inicializar(0)
+            capa.inicializar()
         
         for capa in self.capas:
             capa.propagar()
 
+    def mostrar_nombres(self, fichero):
+        for capa in self.capas:
+            for neurona in capa.neuronas:
+                fichero.write(neurona.nombre + "\t")
+        fichero.write("\n")
+
+    def mostrar_estado(self, fichero):
+        for capa in self.capas:
+            for neurona in capa.neuronas:
+                fichero.write(str(neurona.valor_salida) + "\t")
+        fichero.write("\n")
 
