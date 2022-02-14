@@ -1,4 +1,3 @@
-from click import pass_context
 import random 
 
 class Neurona:
