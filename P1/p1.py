@@ -1,4 +1,5 @@
 import random 
+import sys
 
 class Neurona:
     def __init__(self, umbral, tipo, nombre):
@@ -17,10 +18,18 @@ class Neurona:
         self.conexiones.append(conexion)
         
     def disparar(self):
-        if self.valor_entrada >= self.umbral:
-            self.valor_salida = 1
-        else:
-            self.valor_salida = 0
+        if self.tipo == "Perceptron":
+            if self.valor_entrada > self.umbral:
+                self.valor_salida = 1
+            elif self.valor_entrada >= -self.umbral:
+                self.valor_salida = 0
+            else:
+                self.valor_salida = -1
+        elif self.tipo == "McCulloch-Pitts":
+            if self.valor_entrada >= self.umbral:
+                self.valor_salida = 1
+            else:
+                self.valor_salida = 0
         
     def propagar(self):
         for conexion in self.conexiones:
@@ -54,11 +63,13 @@ class Capa:
         for neurona in neuronas:
             self.neuronas.append(neurona)
 
-    def conectar(self, capa, peso_min, peso_max):
+    def conectar_capa(self, capa, peso_min, peso_max):
         for neurona_destino in capa.neuronas:
-            self.conectar(neurona_destino, peso_min, peso_max)
+            self.conectar_neurona(neurona_destino, peso_min, peso_max)
 
-    def conectar(self, neurona, peso_min, peso_max):
+    def conectar_neurona(self, neurona, peso_min, peso_max):
+        # Revisar
+        # Mirar libreria random
         peso = random.random() 
         peso = peso*(peso_max-peso_min) + peso_min
 
@@ -85,7 +96,7 @@ class RedNeuronal:
         for capa in self.capas:
             capa.inicializar()
 
-    #En el proppagar en redneuronal llamar a inicializar(0) en todas las neuronas de la siguiente capa
+    #En el propagar en redneuronal llamar a inicializar(0) en todas las neuronas de la siguiente capa
     def disparar(self):
         for capa in self.capas:
             capa.disparar()
@@ -104,8 +115,32 @@ class RedNeuronal:
         fichero.write("\n")
 
     def mostrar_estado(self, fichero):
-        for capa in self.capas:
-            for neurona in capa.neuronas:
+        tipo = self.capas[0].neuronas[0].tipo
+        if tipo == "McCulloch-Pitts":
+            for capa in self.capas:
+                for neurona in capa.neuronas:
+                    fichero.write(str(neurona.valor_salida) + "\t")
+            fichero.write("\n")
+        elif tipo == "Perceptron":
+            for neurona in self.capas[0].neuronas:
                 fichero.write(str(neurona.valor_salida) + "\t")
-        fichero.write("\n")
+            for neurona in self.capas[1].neuronas:
+                fichero.write(str(neurona.valor_salida) + "\t")
+            for neurona in self.capas[0].neuronas:
+                fichero.write(str(neurona.conexiones[0].peso) + "\t")
+            fichero.write("\n")
 
+
+def leer2(fichero):
+    first_line = fichero.readline()
+    n_entrada = int(first_line[0])
+    n_salida = int(first_line[2])
+    entradas_datos = []
+    salidas_datos = []
+    for ln in fichero:
+        linea = ln.split('  ')
+        linea[-1] = linea[-1][:-1]
+        linea = list(map(float, linea))
+        entradas_datos.append(linea[:n_entrada])
+        salidas_datos.append(linea[n_entrada:])
+    return (entradas_datos, salidas_datos)
