@@ -109,25 +109,48 @@ class RedNeuronal:
             capa.propagar()
 
     def mostrar_nombres(self, fichero):
-        for capa in self.capas:
-            for neurona in capa.neuronas:
-                fichero.write(neurona.nombre + "\t")
-        fichero.write("\n")
+        tipo = self.capas[0].neuronas[0].tipo
+        if tipo == "McCulloch-Pitts":
+            for capa in self.capas:
+                for neurona in capa.neuronas:
+                    fichero.write(neurona.nombre + " ")
+            fichero.write("\n")
+        elif tipo == "Perceptron":
+            for capa in self.capas:
+                for neurona in capa.neuronas:
+                    fichero.write(neurona.nombre + " ")
+            
+            n_entradas = len(self.capas[0].neuronas)
+            n_salidas = len(self.capas[1].neuronas)
+            if n_salidas == 1:
+                for i in range(n_entradas):
+                    if i != n_entradas-1:
+                        fichero.write("w_"+ str(i+1) + " ")
+                    else:
+                        fichero.write("b ")
+            else:
+                for i in range(n_salidas):
+                    for j in range(n_entradas):
+                        if j != n_entradas-1:
+                            fichero.write("w_"+ str(i+1)+ "_" + str(j+1) + " ")
+                        else:
+                            fichero.write("b_"+ str(i+1) + " ")
+            fichero.write("\n")
 
     def mostrar_estado(self, fichero):
         tipo = self.capas[0].neuronas[0].tipo
         if tipo == "McCulloch-Pitts":
             for capa in self.capas:
                 for neurona in capa.neuronas:
-                    fichero.write(str(neurona.valor_salida) + "\t")
+                    fichero.write(str(neurona.valor_salida) + " ")
             fichero.write("\n")
         elif tipo == "Perceptron":
             for neurona in self.capas[0].neuronas:
-                fichero.write(str(neurona.valor_salida) + "\t")
+                fichero.write(str(neurona.valor_salida) + " ")
             for neurona in self.capas[1].neuronas:
-                fichero.write(str(neurona.valor_salida) + "\t")
+                fichero.write(str(neurona.valor_salida) + " ")
             for neurona in self.capas[0].neuronas:
-                fichero.write(str(neurona.conexiones[0].peso) + "\t")
+                fichero.write(str(neurona.conexiones[0].peso) + " ")
             fichero.write("\n")
 
 
@@ -138,9 +161,41 @@ def leer2(fichero):
     entradas_datos = []
     salidas_datos = []
     for ln in fichero:
-        linea = ln.split('  ')
+        linea = ln.split(' ')
         linea[-1] = linea[-1][:-1]
         linea = list(map(float, linea))
         entradas_datos.append(linea[:n_entrada])
         salidas_datos.append(linea[n_entrada:])
     return (entradas_datos, salidas_datos)
+
+def leer1(fichero, por):
+    first_line = fichero.readline()
+    n_entrada = int(first_line[0])
+    n_salida = int(first_line[2])
+    lineas = []
+    for linea in fichero:
+        lineas.append(linea)
+
+    random.shuffle(lineas)
+
+    entradas_entrenamiento = []
+    salidas_entrenamiento = []
+    entradas_test = []
+    salidas_test = []
+
+    num_lineas_entrenamiento = int(len(lineas) * por)
+    for ln in lineas[:num_lineas_entrenamiento]:
+        linea = ln.split(' ')
+        linea[-1] = linea[-1][:-1]
+        linea = list(map(float, linea))
+        entradas_entrenamiento.append(linea[:n_entrada])
+        salidas_entrenamiento.append(linea[n_entrada:])
+    
+    for ln in lineas[num_lineas_entrenamiento:]:
+        linea = ln.split(' ')
+        linea[-1] = linea[-1][:-1]
+        linea = list(map(float, linea))
+        entradas_test.append(linea[:n_entrada])
+        salidas_test.append(linea[n_entrada:])
+
+    return entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test
