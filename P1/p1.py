@@ -18,7 +18,9 @@ class Neurona:
         self.conexiones.append(conexion)
         
     def disparar(self):
-        if self.tipo == "Perceptron":
+        if self.tipo == "Entrada":
+            self.valor_salida = self.valor_entrada
+        elif self.tipo == "Perceptron":
             if self.valor_entrada > self.umbral:
                 self.valor_salida = 1
             elif self.valor_entrada >= -self.umbral:
@@ -109,7 +111,7 @@ class RedNeuronal:
             capa.propagar()
 
     def mostrar_nombres(self, fichero):
-        tipo = self.capas[0].neuronas[0].tipo
+        tipo = self.capas[-1].neuronas[0].tipo
         if tipo == "McCulloch-Pitts":
             for capa in self.capas:
                 for neurona in capa.neuronas:
@@ -138,7 +140,7 @@ class RedNeuronal:
             fichero.write("\n")
 
     def mostrar_estado(self, fichero):
-        tipo = self.capas[0].neuronas[0].tipo
+        tipo = self.capas[-1].neuronas[0].tipo
         if tipo == "McCulloch-Pitts":
             for capa in self.capas:
                 for neurona in capa.neuronas:
