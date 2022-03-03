@@ -161,20 +161,6 @@ class RedNeuronal:
             fichero.write("\n")
 
 
-def leer2(fichero):
-    first_line = fichero.readline()
-    n_entrada = int(first_line[0])
-    n_salida = int(first_line[2])
-    entradas_datos = []
-    salidas_datos = []
-    for ln in fichero:
-        linea = ln.split(' ')
-        linea[-1] = linea[-1][:-1]
-        linea = list(map(float, linea))
-        entradas_datos.append(linea[:n_entrada])
-        salidas_datos.append(linea[n_entrada:])
-    return (entradas_datos, salidas_datos)
-
 def leer1(fichero, por):
     first_line = fichero.readline()
     n_entrada = int(first_line[0])
@@ -206,6 +192,22 @@ def leer1(fichero, por):
         salidas_test.append(linea[n_entrada:])
 
     return entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test
+
+
+def leer2(fichero):
+    first_line = fichero.readline()
+    n_entrada = int(first_line[0])
+    n_salida = int(first_line[2])
+    entradas_datos = []
+    salidas_datos = []
+    for ln in fichero:
+        linea = ln.split(' ')
+        linea[-1] = linea[-1][:-1]
+        linea = list(map(float, linea))
+        entradas_datos.append(linea[:n_entrada])
+        salidas_datos.append(linea[n_entrada:])
+    return (entradas_datos, salidas_datos)
+
 
 def leer3(fichero_entrenamiento, fichero_test):
     entradas_entrenamiento, salidas_entrenamiento = leer2(fichero_entrenamiento)

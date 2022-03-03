@@ -1,23 +1,20 @@
+from cProfile import label
 from p1 import *
 import sys
 from matplotlib import pyplot as plt
 
 
-def calcular_predicciones(red_neuronal, entradas_test, salidas_test):
-    n_entradas = len(entradas_test[0])
-    n_salidas = len(salidas_test[0])
+def calcular_predicciones(red_neuronal, entradas):
+    n_entradas = len(entradas[0])
     predicciones = []
-
-    for i in range(0, len(entradas_test)):
+    for i in range(0, len(entradas)):
         for j in range(n_entradas):
-            entrada = entradas_test[i][j]
+            entrada = entradas[i][j]
             neurona = red_neuronal.capas[0].neuronas[j]
             neurona.inicializar(entrada)
-
         red_neuronal.disparar()
         red_neuronal.propagar()
         red_neuronal.capas[1].disparar()
-
         prediccion = []
         for neurona in red_neuronal.capas[1].neuronas:
             prediccion.append(neurona.valor_salida)
@@ -25,20 +22,19 @@ def calcular_predicciones(red_neuronal, entradas_test, salidas_test):
     return predicciones
 
 
-def error_cuadratico(red_neuronal, entradas_test, salidas_test):
-    
-    predicciones = calcular_predicciones(red_neuronal, entradas_test, salidas_test)
-
-    num_datos = len(salidas_test)
+def error_cuadratico(red_neuronal, entradas, salidas):
+    predicciones = calcular_predicciones(red_neuronal, entradas)
+    num_predicciones = len(predicciones)
+    tamano_predicciones = len(predicciones[0])
     err_total = 0
-    for i in range(num_datos):
+    for i in range(num_predicciones):
         err = 0
-        real = salidas_test[i]
+        real = salidas[i]
         predicho = predicciones[i]
         for j in range(len(real)):
             err += (real[j] - predicho[j])**2
         err_total += err
-    err_total /= num_datos
+    err_total /= (num_predicciones * tamano_predicciones)
     return err_total
 
 
@@ -54,19 +50,19 @@ def main():
     
     if num_problema == 1:
         fichero = open("problema_real1.txt", "r")
-        entradas_datos, salidas_datos, entradas_test, salidas_test = leer1(fichero, 0.7)
+        entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer1(fichero, 0.7)
     elif num_problema == 2:
         fichero_entrenamiento = open("problema_real2.txt", "r")
         fichero_test = open("problema_real2_no_etiquetados.txt", "r")
-        entradas_datos, salidas_datos, entradas_test, salidas_test = leer3(fichero_entrenamiento, fichero_test)
+        entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer3(fichero_entrenamiento, fichero_test)
 
-    for i in range(len(entradas_datos)):
-        entradas_datos[i].append(1)
+    for i in range(len(entradas_entrenamiento)):
+        entradas_entrenamiento[i].append(1)
     for i in range(len(entradas_test)):
         entradas_test[i].append(1)
 
-    n_entradas = len(entradas_datos[0])
-    n_salidas = len(salidas_datos[0])
+    n_entradas = len(entradas_entrenamiento[0])
+    n_salidas = len(salidas_entrenamiento[0])
 
     red_neuronal = RedNeuronal()
     capa_entrada = Capa()
@@ -86,17 +82,15 @@ def main():
     red_neuronal.anyadir(capa_salida)
     red_neuronal.inicializar()
 
-    f_salida = open("salida_problema_real_1.txt", "w")
     max_incremento_pesos = 1
     n_epoch = 0
-    red_neuronal.mostrar_nombres(f_salida)
     error_entrenamiento = []
     error_test = []
     while max_incremento_pesos > 0 and n_epoch < max_epochs:
         max_incremento_pesos = 0
-        for i in range(0, len(entradas_datos)):
+        for i in range(0, len(entradas_entrenamiento)):
             for j in range(n_entradas):
-                entrada = entradas_datos[i][j]
+                entrada = entradas_entrenamiento[i][j]
                 neurona = capa_entrada.neuronas[j]
                 neurona.inicializar(entrada)
             red_neuronal.disparar()
@@ -104,36 +98,32 @@ def main():
             capa_salida.disparar()
 
             for j in range(n_salidas):
-                t = salidas_datos[i][j]
+                t = salidas_entrenamiento[i][j]
                 y = capa_salida.neuronas[j].valor_salida
                 if y != t:
                     for neurona in capa_entrada.neuronas:
                         max_incremento_pesos = max(max_incremento_pesos, abs(tasa*t*neurona.valor_salida))
                         neurona.conexiones[j].peso += tasa*t*neurona.valor_salida
-            red_neuronal.mostrar_estado(f_salida)
         n_epoch += 1
 
+        err = error_cuadratico(red_neuronal, entradas_entrenamiento, salidas_entrenamiento)
+        error_entrenamiento.append(err)
         if num_problema == 1:
             err = error_cuadratico(red_neuronal, entradas_test, salidas_test)
             error_test.append(err)
-        err = error_cuadratico(red_neuronal, entradas_datos, salidas_datos)
-        error_entrenamiento.append(err)
-
-    plt.plot(range(len(error_entrenamiento)), error_entrenamiento)
-    plt.title("Entrenamiento")
-    plt.show()
 
     if num_problema == 1:
-        plt.plot(range(len(error_test)), error_test)
-        plt.title("Test")
+        plt.plot(range(len(error_entrenamiento)), error_entrenamiento, label="Entrenamiento")
+        plt.plot(range(len(error_test)), error_test, label="Test")
+        plt.legend()
         plt.show()
-    
-    if num_problema==2:
-        for neurona in capa_salida.neuronas:
-            neurona.umbral = 0
+    elif num_problema==2:
+        plt.plot(range(len(error_entrenamiento)), error_entrenamiento)
+        plt.title("Entrenamiento")
+        plt.show()
 
         fichero_predicciones = open("prediccion_perceptron.txt", "w")
-        predicciones = calcular_predicciones(red_neuronal, entradas_test, salidas_test)
+        predicciones = calcular_predicciones(red_neuronal, entradas_test)
         for prediccion in predicciones:
             fichero_predicciones.write(str(prediccion[0]) + " " + str(prediccion[1]) + "\n")
 
