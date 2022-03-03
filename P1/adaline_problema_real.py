@@ -125,6 +125,7 @@ def main():
         for prediccion in predicciones:
             fichero_predicciones.write(str(prediccion[0]) + " " + str(prediccion[1]) + "\n")
 
+
 if __name__ == "__main__":
     main()
     
