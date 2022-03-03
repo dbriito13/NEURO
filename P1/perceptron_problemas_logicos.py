@@ -64,7 +64,6 @@ if __name__ == "__main__":
                     for neurona in capa_entrada.neuronas:
                         max_incremento_pesos = max(max_incremento_pesos, abs(tasa*t*neurona.valor_salida))
                         neurona.conexiones[j].peso += tasa*t*neurona.valor_salida
-                        print(tasa*t*neurona.valor_salida)
             red_neuronal.mostrar_estado(f_salida)
         n_epoch += 1
 
