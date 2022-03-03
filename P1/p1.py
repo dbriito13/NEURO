@@ -2,14 +2,13 @@ import random
 import sys
 
 class Neurona:
-    def __init__(self, umbral, tipo, nombre, entrenando=True):
+    def __init__(self, umbral, tipo, nombre):
         self.umbral = umbral
         self.tipo = tipo
         self.valor_entrada = 0
         self.valor_salida = 0
         self.conexiones = []
         self.nombre = nombre
-        self.entrando = entrenando
 
     def inicializar(self, x):
         self.valor_entrada = x
@@ -19,7 +18,7 @@ class Neurona:
         self.conexiones.append(conexion)
         
     def disparar(self):
-        if self.tipo == "Entrada" or (self.tipo=="Adaline" and self.entrenando==True):
+        if self.tipo == "Entrada":
             self.valor_salida = self.valor_entrada
         elif self.tipo == "Perceptron":
             if self.valor_entrada > self.umbral:
