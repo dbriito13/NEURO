@@ -206,3 +206,8 @@ def leer1(fichero, por):
         salidas_test.append(linea[n_entrada:])
 
     return entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test
+
+def leer3(fichero_entrenamiento, fichero_test):
+    entradas_entrenamiento, salidas_entrenamiento = leer2(fichero_entrenamiento)
+    entradas_test, salidas_test = leer2(fichero_test)
+    return entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test
