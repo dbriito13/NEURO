@@ -116,10 +116,11 @@ def main():
         plt.plot(range(len(error_entrenamiento)), error_entrenamiento, label="Entrenamiento")
         plt.plot(range(len(error_test)), error_test, label="Test")
         plt.legend()
+        plt.title("Perceptrón")
         plt.show()
     elif num_problema==2:
         plt.plot(range(len(error_entrenamiento)), error_entrenamiento)
-        plt.title("Entrenamiento")
+        plt.title("Perceptrón")
         plt.show()
 
         fichero_predicciones = open("predicciones/prediccion_perceptron.txt", "w")
