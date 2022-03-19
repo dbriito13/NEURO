@@ -48,7 +48,10 @@ def main():
     tasa = float(sys.argv[3])
     p = int(sys.argv[4])
     
-    if num_problema == 1:
+    if num_problema == 0:
+        fichero = open("entrada/problema_real0.txt", "r")
+        entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer1(fichero, 0.7)
+    elif num_problema == 1:
         fichero = open("entrada/problema_real1.txt", "r")
         entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer1(fichero, 0.7)
     elif num_problema == 2:
@@ -91,6 +94,17 @@ def main():
     red_neuronal.anyadir(capa_salida)
     red_neuronal.inicializar()
 
+    # Esto hay que borrarlo
+    capa_entrada.neuronas[0].conexiones[0].peso = 0.7
+    capa_entrada.neuronas[0].conexiones[1].peso = -0.4
+    capa_entrada.neuronas[1].conexiones[0].peso = -0.2
+    capa_entrada.neuronas[1].conexiones[1].peso = 0.3
+    capa_entrada.neuronas[2].conexiones[0].peso = 0.4
+    capa_entrada.neuronas[2].conexiones[1].peso = 0.6
+    capa_oculta.neuronas[0].conexiones[0].peso = 0.5
+    capa_oculta.neuronas[1].conexiones[0].peso = 0.1
+    capa_oculta.neuronas[2].conexiones[0].peso = -0.3
+
     max_incremento_pesos = 1
     n_epoch = 0
     error_entrenamiento = []
@@ -117,11 +131,11 @@ def main():
             #print("Capa 2. Entrada: ", capa_oculta.neuronas[1].valor_entrada)
             red_neuronal.disparar()
             #print("Capa 2. Salida ----------------------- ", capa_oculta.neuronas[2].valor_salida)
-            print("-----------------------------" + str(capa_oculta.neuronas[0].valor_entrada))
+            #print("-----------------------------" + str(capa_oculta.neuronas[0].valor_entrada))
 
             red_neuronal.propagar()
             #print("Capa Salida. Entrada: ", capa_salida.neuronas[0].valor_entrada)
-            print("-----------------------------" + str(capa_oculta.neuronas[0].valor_entrada))
+            #print("-----------------------------" + str(capa_oculta.neuronas[0].valor_entrada))
 
             capa_salida.disparar()
             #print("Capa Salida. Salida: ", capa_salida.neuronas[0].valor_salida)
@@ -165,17 +179,19 @@ def main():
 
                 for i in range(n):
                     x_i = capa_entrada.neuronas[i].valor_salida
-                    print("x_" + str(i) + " : "+ str(x_i))
+                    #print("x_" + str(i) + " : "+ str(x_i))
                     incV[i,j] = tasa*beta_j*x_i
-                    print("incV_" + str(i) + "_" +  str(j)+ " : " +str(incV[i,j]))
+                    #print("incV_" + str(i) + "_" +  str(j)+ " : " +str(incV[i,j]))
 
             # Actualizamos los pesos
             for i in range(n):
                 for j in range(p):
                     capa_entrada.neuronas[i].conexiones[j].peso += incV[i,j]
+                    print("V_" + str(i) + "_" +  str(j)+ " : " +str(capa_entrada.neuronas[i].conexiones[j].peso))
             for j in range(p+1):
                 for k in range(m):
                     capa_oculta.neuronas[j].conexiones[k].peso += incW[j,k]
+                    #print("W_" + str(j) + "_" +  str(k)+ " : " +str(capa_oculta.neuronas[j].conexiones[k].peso))
 
 
             
