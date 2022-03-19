@@ -1,5 +1,4 @@
-from cProfile import label
-from p1 import *
+from p2 import *
 import sys
 from matplotlib import pyplot as plt
 
@@ -52,17 +51,33 @@ def main():
         fichero = open("entrada/problema_real0.txt", "r")
         entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer1(fichero, 0.7)
     elif num_problema == 1:
+        random.seed(10)
         fichero = open("entrada/problema_real1.txt", "r")
         entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer1(fichero, 0.7)
     elif num_problema == 2:
         fichero_entrenamiento = open("entrada/problema_real2.txt", "r")
         fichero_test = open("entrada/problema_real2_no_etiquetados.txt", "r")
         entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer3(fichero_entrenamiento, fichero_test)
+    elif num_problema == 6:
+        fichero_entrenamiento = open("entrada/problema_real6.txt", "r")
+        entradas_entrenamiento, salidas_entrenamiento = leer2(fichero_entrenamiento)
+        entradas_test, salidas_test = entradas_entrenamiento, salidas_entrenamiento
+
 
     for i in range(len(entradas_entrenamiento)):
         entradas_entrenamiento[i].append(1)
     for i in range(len(entradas_test)):
         entradas_test[i].append(1)
+
+    # Cambiamos salidas en binario a bipolar
+    for i in range(len(salidas_entrenamiento)):
+        for j in range(len(salidas_entrenamiento[i])):
+            if salidas_entrenamiento[i][j] == 0:
+                salidas_entrenamiento[i][j] = -1
+    for i in range(len(salidas_test)):
+        for j in range(len(salidas_test[i])):
+            if salidas_test[i][j] == 0:
+                salidas_test[i][j] = -1
 
     n_entradas = len(entradas_entrenamiento[0])
     n_salidas = len(salidas_entrenamiento[0])
@@ -85,25 +100,16 @@ def main():
         capa_oculta.anyadir(Neurona(0, "Perceptron", "z"+str(i+1)))
 
 
-    capa_entrada.conectar_capa(capa_oculta, 1, 1)
+    capa_entrada.conectar_capa(capa_oculta, -0.5, 0.5)
     capa_oculta.anyadir(Neurona(0, "Entrada", "1"))
-    capa_oculta.conectar_capa(capa_salida, 1, 1)
+    capa_oculta.conectar_capa(capa_salida, -0.5, 0.5)
 
     red_neuronal.anyadir(capa_entrada)
     red_neuronal.anyadir(capa_oculta)
     red_neuronal.anyadir(capa_salida)
     red_neuronal.inicializar()
 
-    # Esto hay que borrarlo
-    capa_entrada.neuronas[0].conexiones[0].peso = 0.7
-    capa_entrada.neuronas[0].conexiones[1].peso = -0.4
-    capa_entrada.neuronas[1].conexiones[0].peso = -0.2
-    capa_entrada.neuronas[1].conexiones[1].peso = 0.3
-    capa_entrada.neuronas[2].conexiones[0].peso = 0.4
-    capa_entrada.neuronas[2].conexiones[1].peso = 0.6
-    capa_oculta.neuronas[0].conexiones[0].peso = 0.5
-    capa_oculta.neuronas[1].conexiones[0].peso = 0.1
-    capa_oculta.neuronas[2].conexiones[0].peso = -0.3
+
 
     max_incremento_pesos = 1
     n_epoch = 0
@@ -187,14 +193,11 @@ def main():
             for i in range(n):
                 for j in range(p):
                     capa_entrada.neuronas[i].conexiones[j].peso += incV[i,j]
-                    print("V_" + str(i) + "_" +  str(j)+ " : " +str(capa_entrada.neuronas[i].conexiones[j].peso))
+                    #print("V_" + str(i) + "_" +  str(j)+ " : " +str(capa_entrada.neuronas[i].conexiones[j].peso))
             for j in range(p+1):
                 for k in range(m):
                     capa_oculta.neuronas[j].conexiones[k].peso += incW[j,k]
-                    #print("W_" + str(j) + "_" +  str(k)+ " : " +str(capa_oculta.neuronas[j].conexiones[k].peso))
-
-
-            
+                    #print("W_" + str(j) + "_" +  str(k)+ " : " +str(capa_oculta.neuronas[j].conexiones[k].peso))            
 
         n_epoch += 1
 
@@ -210,15 +213,19 @@ def main():
         plt.legend()
         plt.title("Perceptrón")
         plt.show()
-    elif num_problema==2:
+    elif num_problema == 2:
         plt.plot(range(len(error_entrenamiento)), error_entrenamiento)
         plt.title("Perceptrón")
         plt.show()
-
         fichero_predicciones = open("predicciones/prediccion_perceptron.txt", "w")
         predicciones = calcular_predicciones(red_neuronal, entradas_test)
         for prediccion in predicciones:
             fichero_predicciones.write(str(prediccion[0]) + " " + str(prediccion[1]) + "\n")
+    elif num_problema == 6:
+        plt.plot(range(len(error_entrenamiento)), error_entrenamiento, label="Entrenamiento")
+        plt.legend()
+        plt.title("Perceptrón")
+        plt.show()
 
 
 if __name__ == "__main__":

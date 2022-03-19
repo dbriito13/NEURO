@@ -169,7 +169,7 @@ def leer1(fichero, por):
     for linea in fichero:
         lineas.append(linea)
 
-    #random.shuffle(lineas)
+    random.shuffle(lineas)
 
     entradas_entrenamiento = []
     salidas_entrenamiento = []
@@ -196,8 +196,9 @@ def leer1(fichero, por):
 
 def leer2(fichero):
     first_line = fichero.readline()
+    first_line = first_line.split(' ')
     n_entrada = int(first_line[0])
-    n_salida = int(first_line[2])
+    n_salida = int(first_line[1])
     entradas_datos = []
     salidas_datos = []
     for ln in fichero:
