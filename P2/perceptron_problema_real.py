@@ -12,10 +12,6 @@ def normalizar(entradas_entrenamiento, entradas_test):
     df_entrenamiento = (df_entrenamiento - mu)/sigma
     df_test = pd.DataFrame(entradas_test)
     df_test = (df_test - mu)/sigma
-    print(df_entrenamiento)
-    print(df_entrenamiento.max())
-    plt.hist(np.log(1+np.abs(df_entrenamiento[0].values)))
-    plt.show()
     return df_entrenamiento.values.tolist(), df_test.values.tolist()
 
 
@@ -75,7 +71,7 @@ def main():
         if num_problema in [4, 6]:
             entradas_entrenamiento, entradas_test = normalizar(entradas_entrenamiento, entradas_test)
 
-
+    # Añadimos el sesgo a los datos de entrada
     for i in range(len(entradas_entrenamiento)):
         entradas_entrenamiento[i].append(1)
     for i in range(len(entradas_test)):
@@ -90,14 +86,14 @@ def main():
         for j in range(len(salidas_test[i])):
             if salidas_test[i][j] == 0:
                 salidas_test[i][j] = -1
-
-    n_entradas = len(entradas_entrenamiento[0])
-    n_salidas = len(salidas_entrenamiento[0])
-
+    
+    # Creamos la red
     red_neuronal = RedNeuronal()
     capa_entrada = Capa()
     capa_salida = Capa()
     capa_oculta = Capa()
+    n_entradas = len(entradas_entrenamiento[0])
+    n_salidas = len(salidas_entrenamiento[0])
 
     for i in range(n_entradas):
         if i != n_entradas-1:
@@ -111,7 +107,6 @@ def main():
     for i in range(p):
         capa_oculta.anyadir(Neurona(0, "Perceptron", "z"+str(i+1)))
 
-
     capa_entrada.conectar_capa(capa_oculta, -1, 1)
     capa_oculta.anyadir(Neurona(0, "Entrada", "1"))
     capa_oculta.conectar_capa(capa_salida, -1, 1)
@@ -121,6 +116,7 @@ def main():
     red_neuronal.anyadir(capa_salida)
     red_neuronal.inicializar()
 
+    # Inicializamos variables y listas
     max_incremento_pesos = 1
     n_epoch = 0
     error_entrenamiento = []
@@ -132,8 +128,10 @@ def main():
     incW = np.zeros([p+1, m])
     incV = np.zeros([n, p])
     delta = np.zeros(m)
+
+    # Hasta que la condicion de parada no se cumpla, entrenamos la red
     while max_incremento_pesos > 0 and n_epoch < max_epochs:
-        print("Epoch: ", n_epoch)
+        print("Epoch:", n_epoch)
         for q in range(0, len(entradas_entrenamiento)):
             for j in range(n_entradas):
                 entrada = entradas_entrenamiento[q][j]
