@@ -77,11 +77,10 @@ class Capa:
     def conectar_neurona(self, neurona, peso_min, peso_max):
         # Revisar
         # Mirar libreria random
-        peso = random.random() 
-        peso = peso*(peso_max-peso_min) + peso_min
-
         for neurona_origen in self.neuronas:
-                neurona_origen.conectar(neurona, peso)
+            peso = random.random() 
+            peso = peso*(peso_max-peso_min) + peso_min
+            neurona_origen.conectar(neurona, peso)
 
     def disparar(self):
         for neurona in self.neuronas:

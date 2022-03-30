@@ -13,9 +13,11 @@ def calcular_predicciones(red_neuronal, entradas):
             neurona.inicializar(entrada)
         red_neuronal.disparar()
         red_neuronal.propagar()
-        red_neuronal.capas[1].disparar()
+        red_neuronal.disparar()
+        red_neuronal.propagar()
+        red_neuronal.capas[-1].disparar()
         prediccion = []
-        for neurona in red_neuronal.capas[1].neuronas:
+        for neurona in red_neuronal.capas[-1].neuronas:
             prediccion.append(neurona.valor_salida)
         predicciones.append(prediccion)
     return predicciones
@@ -51,7 +53,6 @@ def main():
         fichero = open("entrada/problema_real0.txt", "r")
         entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer1(fichero, 0.7)
     elif num_problema == 1:
-        random.seed(10)
         fichero = open("entrada/problema_real1.txt", "r")
         entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer1(fichero, 0.7)
     elif num_problema == 2:
@@ -100,16 +101,14 @@ def main():
         capa_oculta.anyadir(Neurona(0, "Perceptron", "z"+str(i+1)))
 
 
-    capa_entrada.conectar_capa(capa_oculta, -0.5, 0.5)
+    capa_entrada.conectar_capa(capa_oculta, -1, 1)
     capa_oculta.anyadir(Neurona(0, "Entrada", "1"))
-    capa_oculta.conectar_capa(capa_salida, -0.5, 0.5)
+    capa_oculta.conectar_capa(capa_salida, -1, 1)
 
     red_neuronal.anyadir(capa_entrada)
     red_neuronal.anyadir(capa_oculta)
     red_neuronal.anyadir(capa_salida)
     red_neuronal.inicializar()
-
-
 
     max_incremento_pesos = 1
     n_epoch = 0
@@ -207,7 +206,7 @@ def main():
             err = error_cuadratico(red_neuronal, entradas_test, salidas_test)
             error_test.append(err)
 
-    if num_problema == 1:
+    if num_problema <= 1:
         plt.plot(range(len(error_entrenamiento)), error_entrenamiento, label="Entrenamiento")
         plt.plot(range(len(error_test)), error_test, label="Test")
         plt.legend()
