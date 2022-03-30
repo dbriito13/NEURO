@@ -233,7 +233,10 @@ def main():
         plt.show()
     elif num_problema == 0:
         plt.plot(range(len(error_entrenamiento)), error_entrenamiento)
-        plt.title(f"ECM Problema {num_problema}. epochs={max_epochs}")
+        plt.title(f"ECM Problema {num_problema}: epochs={max_epochs}, alpha={tasa}, p={p}")
+        plt.show()
+        plt.plot(range(len(tasa_entrenamiento)), tasa_entrenamiento)
+        plt.title(f"Tasa Aciertos Problema {num_problema}: epochs={max_epochs}, alpha={tasa}, p={p}")
         plt.show()
         fichero_predicciones = open("predicciones/prediccion_problema_real2.txt", "w")
         predicciones = calcular_predicciones(red_neuronal, entradas_test)
