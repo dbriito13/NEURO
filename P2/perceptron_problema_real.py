@@ -3,6 +3,7 @@ from p2 import *
 import sys
 from matplotlib import pyplot as plt
 import pandas as pd
+import seaborn as sn
 
 
 def normalizar(entradas_entrenamiento, entradas_test):
@@ -49,6 +50,7 @@ def error_cuadratico(predicciones, salidas):
     err_total /= (num_predicciones * tamano_predicciones)
     return err_total
 
+
 def tasa_aciertos(predicciones, salidas):
     num_predicciones = len(predicciones)
     aciertos = 0
@@ -60,6 +62,19 @@ def tasa_aciertos(predicciones, salidas):
         if clase_real == clase_predicha:
             aciertos += 1
     return aciertos / num_predicciones
+
+
+def calcular_matriz_confusion(predicciones, salidas):
+    num_clases = len(predicciones[0])
+    num_predicciones = len(predicciones)
+    m = np.zeros((num_clases, num_clases))
+    for i in range(num_predicciones):
+        real = salidas[i]
+        predicho = predicciones[i]
+        clase_real = real.index(max(real))
+        clase_predicha = predicho.index(max(predicho))
+        m[clase_predicha, clase_real] += 1
+    return m/num_predicciones
 
 
 def main():
@@ -209,14 +224,24 @@ def main():
         plt.legend()
         plt.title(f"Tasa Aciertos Problema {num_problema}: epochs={max_epochs}, alpha={tasa}, p={p}")
         plt.show()
+
+        m = calcular_matriz_confusion(predicciones, salidas_test)
+        df = pd.DataFrame(m, columns=["Positivo", "Negativo"], index=["Positivo", "Negativo"])
+        sn.heatmap(df, annot=True, cmap="Blues", vmin=0, vmax=1)
+        plt.xlabel("Real")
+        plt.ylabel("Predicción")
+        plt.show()
     elif num_problema == 0:
         plt.plot(range(len(error_entrenamiento)), error_entrenamiento)
         plt.title(f"ECM Problema {num_problema}. epochs={max_epochs}")
         plt.show()
-        fichero_predicciones = open("predicciones/prediccion_perceptron.txt", "w")
+        fichero_predicciones = open("predicciones/prediccion_problema_real2.txt", "w")
         predicciones = calcular_predicciones(red_neuronal, entradas_test)
         for prediccion in predicciones:
-            fichero_predicciones.write(str(prediccion[0]) + " " + str(prediccion[1]) + "\n")
+            if prediccion[0] > prediccion[1]:
+                fichero_predicciones.write("1 -1\n")
+            else:
+                fichero_predicciones.write("-1 1\n")
 
 
 if __name__ == "__main__":
