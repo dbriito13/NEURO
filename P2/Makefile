@@ -20,19 +20,4 @@ ejecuta_problema_real6:
 	@python3 src/perceptron_problema_real.py 6 10 0.1 20
 
 calcular_predicciones:
-	@python3 src/perceptron_problema_real.py 2 60 0.25 0.02
-	@python3 src/adaline_problema_real.py 2 60 0.01 0.02
-
-
-# Problemas logicos
-ejecuta_problemas_logicos:
-	@python3 src/perceptron_problemas_logicos.py entrada/or.txt salida/salida_or.txt 50 0.2 1
-	@python3 src/perceptron_problemas_logicos.py entrada/and.txt salida/salida_and.txt 50 0.2 1
-	@python3 src/perceptron_problemas_logicos.py entrada/nand.txt salida/salida_nand.txt 50 0.2 1
-	@python3 src/perceptron_problemas_logicos.py entrada/xor.txt salida/salida_xor.txt 50 0.2 1
-
-
-# Necesario
-
-
-
+	@python3 src/perceptron_problema_real.py 2 100 0.025 16
