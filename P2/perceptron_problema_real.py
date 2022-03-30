@@ -138,78 +138,43 @@ def main():
                 neurona = capa_entrada.neuronas[j]
                 neurona.inicializar(entrada)
 
-
-            #print("Capa 1. Entrada: ", capa_entrada.neuronas[0].valor_entrada)
             red_neuronal.disparar()
-            #print("Capa 1. Salida: ", capa_entrada.neuronas[0].valor_salida)
             red_neuronal.propagar()
-            #print("Capa 2. Entrada: ", capa_oculta.neuronas[1].valor_entrada)
             red_neuronal.disparar()
-            #print("Capa 2. Salida ----------------------- ", capa_oculta.neuronas[2].valor_salida)
-            #print("-----------------------------" + str(capa_oculta.neuronas[0].valor_entrada))
-
             red_neuronal.propagar()
-            #print("Capa Salida. Entrada: ", capa_salida.neuronas[0].valor_entrada)
-            #print("-----------------------------" + str(capa_oculta.neuronas[0].valor_entrada))
-
             capa_salida.disparar()
-            #print("Capa Salida. Salida: ", capa_salida.neuronas[0].valor_salida)
 
-
-            # Esto es para calcular los incrementos
+            # Calculamos los incrementos de los pesos
             for k in range(m):
                 t_k = salidas_entrenamiento[q][k]
-                #print("t_" + str(k) + " : " + str(t_k))
                 y_k = capa_salida.neuronas[k].valor_salida
-                #print("y_" + str(k) + " : " + str(y_k))
-                
                 y_in_k = capa_salida.neuronas[k].valor_entrada
-                #print("y_in_k" + str(k) + " : " + str(y_in_k))
                 delta_k = (t_k - y_k)*f_prima(y_in_k)
-                #print("delta_" + str(k) + " : " +str(delta_k))
                 delta[k] = delta_k
-                #print("Capa 2. Salida_s ----------------------- ", capa_oculta.neuronas[2].valor_salida)
-
-
                 for j in range(p+1):
                     z_j = capa_oculta.neuronas[j].valor_salida
-                    #print("z_" + str(j) + " : " + str(z_j))
                     incW[j, k] = tasa*delta_k*z_j
-                    #print("incW_" + str(j) + "_" +  str(k)+ " : " +str(incW[j,k]))
 
-            #Igual es p+1
             for j in range(p):
                 w_j = []
                 for conexion in capa_oculta.neuronas[j].conexiones:
                     w_j.append(conexion.peso)
-                #print("delta: ", delta)
-                #print("w_" + str(j) + " : " +str(w_j))
                 beta_in_j = np.dot(delta, np.array(w_j))
-                #print("beta_in_" + str(j) + " : " +str(beta_in_j))
                 z_in_j = capa_oculta.neuronas[j].valor_entrada
-                #print("z_in_" + str(j) + " : " +str(z_in_j))
                 beta_j = beta_in_j * f_prima(z_in_j)
-                #print("beta_" + str(j) + " : " +str(beta_j))
-
-
                 for i in range(n):
                     x_i = capa_entrada.neuronas[i].valor_salida
-                    #print("x_" + str(i) + " : "+ str(x_i))
                     incV[i,j] = tasa*beta_j*x_i
-                    #print("incV_" + str(i) + "_" +  str(j)+ " : " +str(incV[i,j]))
 
             # Actualizamos los pesos
             for i in range(n):
                 for j in range(p):
                     capa_entrada.neuronas[i].conexiones[j].peso += incV[i,j]
-                    #print("V_" + str(i) + "_" +  str(j)+ " : " +str(capa_entrada.neuronas[i].conexiones[j].peso))
             for j in range(p+1):
                 for k in range(m):
-                    capa_oculta.neuronas[j].conexiones[k].peso += incW[j,k]
-                    #print("W_" + str(j) + "_" +  str(k)+ " : " +str(capa_oculta.neuronas[j].conexiones[k].peso))            
+                    capa_oculta.neuronas[j].conexiones[k].peso += incW[j,k]     
 
         n_epoch += 1
-
         err = error_cuadratico(red_neuronal, entradas_entrenamiento, salidas_entrenamiento)
         error_entrenamiento.append(err)
         if num_problema > 0:
