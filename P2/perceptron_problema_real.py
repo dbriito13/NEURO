@@ -1,10 +1,22 @@
+from cgi import test
 from p2 import *
 import sys
 from matplotlib import pyplot as plt
+import pandas as pd
 
 
-def normalizar(entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test):
-    return entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test
+def normalizar(entradas_entrenamiento, entradas_test):
+    df_entrenamiento = pd.DataFrame(entradas_entrenamiento)
+    mu = df_entrenamiento.mean()
+    sigma = df_entrenamiento.std()
+    df_entrenamiento = (df_entrenamiento - mu)/sigma
+    df_test = pd.DataFrame(entradas_test)
+    df_test = (df_test - mu)/sigma
+    print(df_entrenamiento)
+    print(df_entrenamiento.max())
+    plt.hist(np.log(1+np.abs(df_entrenamiento[0].values)))
+    plt.show()
+    return df_entrenamiento.values.tolist(), df_test.values.tolist()
 
 
 def calcular_predicciones(red_neuronal, entradas):
@@ -61,8 +73,7 @@ def main():
         fichero = open("entrada/problema_real" + str(num_problema) + ".txt", "r")
         entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer1(fichero, 0.7)
         if num_problema in [4, 6]:
-            normalizados = normalizar(entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test)
-            entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = normalizados
+            entradas_entrenamiento, entradas_test = normalizar(entradas_entrenamiento, entradas_test)
 
 
     for i in range(len(entradas_entrenamiento)):
@@ -122,6 +133,7 @@ def main():
     incV = np.zeros([n, p])
     delta = np.zeros(m)
     while max_incremento_pesos > 0 and n_epoch < max_epochs:
+        print("Epoch: ", n_epoch)
         for q in range(0, len(entradas_entrenamiento)):
             for j in range(n_entradas):
                 entrada = entradas_entrenamiento[q][j]

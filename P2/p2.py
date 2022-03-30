@@ -83,6 +83,9 @@ class Capa:
             neurona_origen.conectar(neurona, peso)
 
     def disparar(self):
+        for j, neurona in enumerate(self.neuronas):
+            if neurona.valor_entrada > 100:
+                print(j, "-", len(self.neuronas), ":", neurona.valor_entrada)
         for neurona in self.neuronas:
             neurona.disparar()
     
@@ -215,6 +218,7 @@ def leer3(fichero_entrenamiento, fichero_test):
     entradas_test, salidas_test = leer2(fichero_test)
     return entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test
 
+import warnings
 
 def f(x):
     return 2/(1 + np.exp(-x)) - 1
