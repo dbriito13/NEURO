@@ -162,8 +162,9 @@ class RedNeuronal:
 
 def leer1(fichero, por):
     first_line = fichero.readline()
+    first_line = first_line.split(' ')
     n_entrada = int(first_line[0])
-    n_salida = int(first_line[2])
+    n_salida = int(first_line[1])
     lineas = []
     for linea in fichero:
         lineas.append(linea)

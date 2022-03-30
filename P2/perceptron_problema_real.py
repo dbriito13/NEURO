@@ -3,6 +3,10 @@ import sys
 from matplotlib import pyplot as plt
 
 
+def normalizar(entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test):
+    return entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test
+
+
 def calcular_predicciones(red_neuronal, entradas):
     n_entradas = len(entradas[0])
     predicciones = []
@@ -50,19 +54,15 @@ def main():
     p = int(sys.argv[4])
     
     if num_problema == 0:
-        fichero = open("entrada/problema_real0.txt", "r")
-        entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer1(fichero, 0.7)
-    elif num_problema == 1:
-        fichero = open("entrada/problema_real1.txt", "r")
-        entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer1(fichero, 0.7)
-    elif num_problema == 2:
         fichero_entrenamiento = open("entrada/problema_real2.txt", "r")
         fichero_test = open("entrada/problema_real2_no_etiquetados.txt", "r")
         entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer3(fichero_entrenamiento, fichero_test)
-    elif num_problema == 6:
-        fichero_entrenamiento = open("entrada/problema_real6.txt", "r")
-        entradas_entrenamiento, salidas_entrenamiento = leer2(fichero_entrenamiento)
-        entradas_test, salidas_test = entradas_entrenamiento, salidas_entrenamiento
+    else:
+        fichero = open("entrada/problema_real" + str(num_problema) + ".txt", "r")
+        entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = leer1(fichero, 0.7)
+        if num_problema in [4, 6]:
+            normalizados = normalizar(entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test)
+            entradas_entrenamiento, salidas_entrenamiento, entradas_test, salidas_test = normalizados
 
 
     for i in range(len(entradas_entrenamiento)):
@@ -202,17 +202,17 @@ def main():
 
         err = error_cuadratico(red_neuronal, entradas_entrenamiento, salidas_entrenamiento)
         error_entrenamiento.append(err)
-        if num_problema == 1:
+        if num_problema > 0:
             err = error_cuadratico(red_neuronal, entradas_test, salidas_test)
             error_test.append(err)
 
-    if num_problema <= 1:
+    if num_problema > 0:
         plt.plot(range(len(error_entrenamiento)), error_entrenamiento, label="Entrenamiento")
         plt.plot(range(len(error_test)), error_test, label="Test")
         plt.legend()
         plt.title("Perceptrón")
         plt.show()
-    elif num_problema == 2:
+    elif num_problema == 0:
         plt.plot(range(len(error_entrenamiento)), error_entrenamiento)
         plt.title("Perceptrón")
         plt.show()
@@ -220,11 +220,6 @@ def main():
         predicciones = calcular_predicciones(red_neuronal, entradas_test)
         for prediccion in predicciones:
             fichero_predicciones.write(str(prediccion[0]) + " " + str(prediccion[1]) + "\n")
-    elif num_problema == 6:
-        plt.plot(range(len(error_entrenamiento)), error_entrenamiento, label="Entrenamiento")
-        plt.legend()
-        plt.title("Perceptrón")
-        plt.show()
 
 
 if __name__ == "__main__":
