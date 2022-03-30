@@ -46,7 +46,6 @@ class Conexion:
         self.neurona = neurona
     
     def propagar(self, valor):
-        #print(valor * self.peso)
         self.neurona.valor_entrada += valor * self.peso
 
 
@@ -75,17 +74,12 @@ class Capa:
             self.conectar_neurona(neurona_destino, peso_min, peso_max)
 
     def conectar_neurona(self, neurona, peso_min, peso_max):
-        # Revisar
-        # Mirar libreria random
         for neurona_origen in self.neuronas:
             peso = random.random() 
             peso = peso*(peso_max-peso_min) + peso_min
             neurona_origen.conectar(neurona, peso)
 
     def disparar(self):
-        for j, neurona in enumerate(self.neuronas):
-            if neurona.valor_entrada > 100:
-                print(j, "-", len(self.neuronas), ":", neurona.valor_entrada)
         for neurona in self.neuronas:
             neurona.disparar()
     

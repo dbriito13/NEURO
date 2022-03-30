@@ -1,54 +1,24 @@
-# McCullock Pitts
-ayuda_mp:
-	@echo "Los argumentos son ENTRADA y SALIDA, por ejemplo:"
-	@echo "make ejecuta_mp_con ENTRADA=entrada/entrada.txt SALIDA=salida/salida.txt"
-	@echo ""
-	@echo "- ENTRADA: fichero de entrada."
-	@echo "- SALIDA: fichero de salida."
-
-compila_mp:
+compilar:
 	@echo Usamos python, no hay que compilar.
 
-ejecuta_mp:
-	@python3 src/McCulloch-Pitts.py entrada/entrada.txt salida/salida.txt
-
-ejecuta_mp_con:
-	@python3 src/McCulloch-Pitts.py $(ENTRADA) $(SALIDA)
-
-
-# Perceptron
-ayuda_perceptron:
-	@echo "Los argumentos son MAX_EPOCHS, UMBRAL y TASA, por ejemplo:"
-	@echo "make ejecuta_perceptron_con MAX_EPOCHS=60 UMBRAL=0.25 TASA=0.02 P=2"
+ayuda_retro:
+	@echo "Los argumentos son NUM_PROB, MAX_EPOCHS, TASA y P, por ejemplo:"
+	@echo "make ejecuta_perceptron_con NUM_PROB=1 MAX_EPOCHS=100 TASA=0.025 P=16"
 	@echo ""
+	@echo "- NUM_PROB: problema que se desea resolver."
 	@echo "- MAX_EPOCHS: número máximo de epochs que entrena la red."
-	@echo "- UMBRAL: umbral de activación de las neuronas."
 	@echo "- TASA: tasa de aprendizaje."
-
-ejecuta_perceptron:
-	@python3 src/perceptron_problema_real.py 1 60 0.25 0.02 2
+	@echo "- P: número de neuronas en la capa oculta."
 
 ejecuta_perceptron_con:
-	@python3 src/perceptron_problema_real.py 1 $(MAX_EPOCHS) $(UMBRAL) $(TASA) $(P)
+	@python3 src/perceptron_problema_real.py $(NUM_PROB) $(MAX_EPOCHS) $(TASA) $(P)
 
+ejecuta_problema_real2:
+	@python3 src/perceptron_problema_real.py 2 100 0.025 16
 
-# Adaline
-ayuda_adaline:
-	@echo "Los argumentos son MAX_EPOCHS, TOLERANCIA y TASA, por ejemplo:"
-	@echo "make ejecuta_adaline_con MAX_EPOCHS=60 TOLERANCIA=0.01 TASA=0.02"
-	@echo ""
-	@echo "- MAX_EPOCHS: número máximo de epochs que entrena la red."
-	@echo "- TOLERANCIA: tolerancia usada para parar el entrenamiento."
-	@echo "- TASA: tasa de aprendizaje."
+ejecuta_problema_real6:
+	@python3 src/perceptron_problema_real.py 6 10 0.1 20
 
-ejecuta_adaline:
-	@python3 src/adaline_problema_real.py 1 60 0.01 0.02
-
-ejecuta_adaline_con:
-	@python3 src/adaline_problema_real.py 1 $(MAX_EPOCHS) $(TOLERANCIA) $(TASA)
-
-
-# Predicciones en el problema real 2
 calcular_predicciones:
 	@python3 src/perceptron_problema_real.py 2 60 0.25 0.02
 	@python3 src/adaline_problema_real.py 2 60 0.01 0.02
@@ -63,7 +33,6 @@ ejecuta_problemas_logicos:
 
 
 # Necesario
-compila:
-	@echo Usamos python, no hay que compilar.
+
 
 
