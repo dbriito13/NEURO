@@ -35,8 +35,7 @@ def calcular_predicciones(red_neuronal, entradas):
     return predicciones
 
 
-def error_cuadratico(red_neuronal, entradas, salidas):
-    predicciones = calcular_predicciones(red_neuronal, entradas)
+def error_cuadratico(predicciones, salidas):
     num_predicciones = len(predicciones)
     tamano_predicciones = len(predicciones[0])
     err_total = 0
@@ -49,6 +48,18 @@ def error_cuadratico(red_neuronal, entradas, salidas):
         err_total += err
     err_total /= (num_predicciones * tamano_predicciones)
     return err_total
+
+def tasa_aciertos(predicciones, salidas):
+    num_predicciones = len(predicciones)
+    aciertos = 0
+    for i in range(num_predicciones):
+        real = salidas[i]
+        predicho = predicciones[i]
+        clase_real = real.index(max(real))
+        clase_predicha = predicho.index(max(predicho))
+        if clase_real == clase_predicha:
+            aciertos += 1
+    return aciertos / num_predicciones
 
 
 def main():
@@ -121,6 +132,8 @@ def main():
     n_epoch = 0
     error_entrenamiento = []
     error_test = []
+    tasa_entrenamiento = []
+    tasa_test = []
 
     #Declaramos las matrices incW, incV y delta (capa salida)
     n = n_entradas
@@ -175,21 +188,30 @@ def main():
                     capa_oculta.neuronas[j].conexiones[k].peso += incW[j,k]     
 
         n_epoch += 1
-        err = error_cuadratico(red_neuronal, entradas_entrenamiento, salidas_entrenamiento)
+        predicciones = calcular_predicciones(red_neuronal, entradas_entrenamiento)
+        err = error_cuadratico(predicciones, salidas_entrenamiento)
         error_entrenamiento.append(err)
+        tasa_entrenamiento.append(tasa_aciertos(predicciones, salidas_entrenamiento))
         if num_problema > 0:
-            err = error_cuadratico(red_neuronal, entradas_test, salidas_test)
+            predicciones = calcular_predicciones(red_neuronal, entradas_test)
+            err = error_cuadratico(predicciones, salidas_test)
             error_test.append(err)
+            tasa_test.append(tasa_aciertos(predicciones, salidas_test))
 
     if num_problema > 0:
         plt.plot(range(len(error_entrenamiento)), error_entrenamiento, label="Entrenamiento")
         plt.plot(range(len(error_test)), error_test, label="Test")
         plt.legend()
-        plt.title("Perceptrón")
+        plt.title(f"ECM Problema {num_problema}: epochs={max_epochs}, alpha={tasa}, p={p}")
+        plt.show()
+        plt.plot(range(len(tasa_entrenamiento)), tasa_entrenamiento, label="Entrenamiento")
+        plt.plot(range(len(tasa_test)), tasa_test, label="Test")
+        plt.legend()
+        plt.title(f"Tasa Aciertos Problema {num_problema}: epochs={max_epochs}, alpha={tasa}, p={p}")
         plt.show()
     elif num_problema == 0:
         plt.plot(range(len(error_entrenamiento)), error_entrenamiento)
-        plt.title("Perceptrón")
+        plt.title(f"ECM Problema {num_problema}. epochs={max_epochs}")
         plt.show()
         fichero_predicciones = open("predicciones/prediccion_perceptron.txt", "w")
         predicciones = calcular_predicciones(red_neuronal, entradas_test)
