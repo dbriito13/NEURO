@@ -32,4 +32,4 @@ ejecuta_problema_real6:
 	@python3 src/perceptron_problema_real.py 6 10 0.1 20
 
 calcular_predicciones:
-	@python3 src/perceptron_problema_real.py 0 100 0.025 16
+	@python3 src/perceptron_problema_real.py 0 20 0.025 16

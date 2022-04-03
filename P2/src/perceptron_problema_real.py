@@ -244,7 +244,7 @@ def main():
         plt.plot(range(len(tasa_entrenamiento)), tasa_entrenamiento)
         plt.title(f"Tasa Aciertos Problema {num_problema}: epochs={max_epochs}, alpha={tasa}, p={p}")
         plt.show()
-        fichero_predicciones = open("predicciones/prediccion_problema_real2.txt", "w")
+        fichero_predicciones = open("prediccion_problema_real2.txt", "w")
         predicciones = calcular_predicciones(red_neuronal, entradas_test)
         for prediccion in predicciones:
             if prediccion[0] > prediccion[1]:
