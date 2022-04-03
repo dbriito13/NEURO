@@ -5,7 +5,7 @@ ayuda_retro:
 	@echo "Los argumentos son NUM_PROB, MAX_EPOCHS, TASA y P, por ejemplo:"
 	@echo "make ejecuta_perceptron_con NUM_PROB=1 MAX_EPOCHS=100 TASA=0.025 P=16"
 	@echo ""
-	@echo "- NUM_PROB: problema que se desea resolver."
+	@echo "- NUM_PROB: problema que se desea resolver. Con NUM_PROB=0 se recalculan las predicciones del Problema 2."
 	@echo "- MAX_EPOCHS: número máximo de epochs que entrena la red."
 	@echo "- TASA: tasa de aprendizaje."
 	@echo "- P: número de neuronas en la capa oculta."
