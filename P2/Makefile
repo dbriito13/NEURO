@@ -29,7 +29,7 @@ ejecuta_problema_real5:
 	@python3 src/perceptron_problema_real.py 5 175 0.01 32
 
 ejecuta_problema_real6:
-	@python3 src/perceptron_problema_real.py 6 10 0.1 20
+	@python3 src/perceptron_problema_real.py 6 500 0.1 20
 
 calcular_predicciones:
 	@python3 src/perceptron_problema_real.py 0 20 0.025 16
