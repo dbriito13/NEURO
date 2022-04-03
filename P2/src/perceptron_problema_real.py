@@ -226,10 +226,16 @@ def main():
         plt.show()
 
         m = calcular_matriz_confusion(predicciones, salidas_test)
-        df = pd.DataFrame(m, columns=["Positivo", "Negativo"], index=["Positivo", "Negativo"])
+        num_clases = len(m)
+        if num_clases == 2:
+            nombres = ["Positivo", "Negativo"]
+        else:
+            nombres = ["Clase " + str(i) for i in range(num_clases)]
+        df = pd.DataFrame(m, columns=nombres, index=nombres)
         sn.heatmap(df, annot=True, cmap="Blues", vmin=0, vmax=1)
         plt.xlabel("Real")
         plt.ylabel("Predicción")
+        plt.title(f"Matriz Confusión Problema {num_problema}: epochs={max_epochs}, alpha={tasa}, p={p}")
         plt.show()
     elif num_problema == 0:
         plt.plot(range(len(error_entrenamiento)), error_entrenamiento)
